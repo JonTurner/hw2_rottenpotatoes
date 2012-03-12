@@ -15,7 +15,7 @@ class MoviesController < ApplicationController
     if params[:ratings]
       params[:ratings].keys.each{|x| @selected_ratings << x}
     else
-      @selected_ratings = session[:selected_ratings]
+      @selected_ratings = session[:selected_ratings] || []
     end 
     session[:selected_ratings] = @selected_ratings
     @filter_ratings = @selected_ratings
@@ -24,7 +24,7 @@ class MoviesController < ApplicationController
     if params[:sort]
       @sort_by = params[:sort]
     else
-      @sort_by = session[:sort_by]
+      @sort_by = session[:sort_by] || ''
     end
     session[:sort_by] = @sort_by
 
