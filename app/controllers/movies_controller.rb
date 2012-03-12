@@ -7,6 +7,40 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @history_hash = params
+    
+    
+    @all_ratings = Movie.all_ratings
+    @selected_ratings = []
+    if params[:ratings]
+      params[:ratings].keys.each{|x| @selected_ratings << x}
+    else
+      @selected_ratings = session[:selected_ratings]
+    end 
+    session[:selected_ratings] = @selected_ratings
+    @filter_ratings = @selected_ratings
+    @filter_ratings = @all_ratings if @filter_ratings == []
+
+    if params[:sort]
+      @sort_by = params[:sort]
+    else
+      @sort_by = session[:sort_by]
+    end
+    session[:sort_by] = @sort_by
+
+    @css_title = "hilite" if @sort_by == 'title'
+    @css_release_date = "hilite" if @sort_by  == 'release_date'
+    @movies = Movie.find(:all, :conditions => {:rating => @filter_ratings}, :order => @sort_by)
+  end
+
+  def _index
+    @history_hash = params
+#@history_hash = @history_hash.delete("action") #.delete("contoller")
+    if params.empty? && !session[:movies_index].empty?
+      redirect_to movies_path(session[:movies_index])
+    elsif !params.empty?
+      session[:movies_index] = params
+    end
     @all_ratings = Movie.all_ratings
     @selected_ratings = []
     params[:ratings].keys.each{|x| @selected_ratings << x} if params[:ratings]
